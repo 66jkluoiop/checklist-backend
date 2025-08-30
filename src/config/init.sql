@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '任务ID，自增主键',
     title VARCHAR(255) NOT NULL COMMENT '任务标题，不能为空',
     description TEXT COMMENT '任务详细描述，可选',
+    content LONGTEXT COMMENT '任务内容，支持富文本格式',
     
     -- 任务状态和优先级
     status ENUM('pending', 'in_progress', 'completed') 

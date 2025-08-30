@@ -6,15 +6,30 @@ class Task {
      * @param {Object} taskData - 任务数据
      * @param {string} taskData.title - 任务标题
      * @param {string} [taskData.description] - 任务描述（可选）
+     * @param {string} [taskData.content] - 任务内容，支持富文本（可选）
      * @param {string} [taskData.priority='medium'] - 任务优先级（low/medium/high）
      * @param {string} [taskData.due_date] - 截止日期（YYYY-MM-DD格式）
      * @returns {Promise<Object>} 创建的任务对象
      */
     static async create(taskData) {
         try {
+            // 处理日期格式
+            let formattedDueDate = null;
+            if (taskData.due_date) {
+                // 将日期字符串转换为 YYYY-MM-DD 格式
+                const date = new Date(taskData.due_date);
+                formattedDueDate = date.toISOString().split('T')[0];
+            }
+
             const [result] = await pool.query(
-                'INSERT INTO tasks (title, description, priority, due_date) VALUES (?, ?, ?, ?)',
-                [taskData.title, taskData.description, taskData.priority || 'medium', taskData.due_date]
+                'INSERT INTO tasks (title, description, content, priority, due_date) VALUES (?, ?, ?, ?, ?)',
+                [
+                    taskData.title,
+                    taskData.description,
+                    taskData.content,
+                    taskData.priority || 'medium',
+                    formattedDueDate
+                ]
             );
             return this.findById(result.insertId);
         } catch (error) {
@@ -86,9 +101,15 @@ class Task {
      */
     static async update(id, updateData) {
         try {
-            const allowedFields = ['title', 'description', 'status', 'priority', 'due_date'];
+            const allowedFields = ['title', 'description', 'content', 'status', 'priority', 'due_date'];
             const updates = [];
             const values = [];
+
+            // 处理日期格式
+            if (updateData.due_date) {
+                const date = new Date(updateData.due_date);
+                updateData.due_date = date.toISOString().split('T')[0];
+            }
 
             for (const [key, value] of Object.entries(updateData)) {
                 if (allowedFields.includes(key) && value !== undefined) {
