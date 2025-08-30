@@ -49,14 +49,21 @@ router.get('/stats', taskController.getTasksStats);
  *             properties:
  *               title:
  *                 type: string
+ *                 description: 任务标题
  *               description:
  *                 type: string
+ *                 description: 任务简短描述
+ *               content:
+ *                 type: string
+ *                 description: 任务详细内容（支持富文本格式）
  *               priority:
  *                 type: string
  *                 enum: [low, medium, high]
+ *                 description: 任务优先级
  *               due_date:
  *                 type: string
  *                 format: date
+ *                 description: 截止日期（YYYY-MM-DD）
  */
 router.post('/', taskController.createTask);
 
@@ -78,13 +85,41 @@ router.get('/:id', taskController.getTaskById);
  * @swagger
  * /api/tasks/{id}:
  *   put:
- *     summary: 更新任务
+ *     summary: 更新任务信息（支持更新所有字段）
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: 任务标题
+ *               description:
+ *                 type: string
+ *                 description: 任务简短描述
+ *               content:
+ *                 type: string
+ *                 description: 任务详细内容（支持富文本格式）
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *                 description: 任务优先级
+ *               status:
+ *                 type: string
+ *                 enum: [pending, in_progress, completed]
+ *                 description: 任务状态
+ *               due_date:
+ *                 type: string
+ *                 format: date
+ *                 description: 截止日期（YYYY-MM-DD）
  */
 router.put('/:id', taskController.updateTask);
 
@@ -106,7 +141,8 @@ router.delete('/:id', taskController.deleteTask);
  * @swagger
  * /api/tasks/{id}/status:
  *   patch:
- *     summary: 更新任务状态
+ *     summary: 快速更新任务状态
+ *     description: 仅更新任务状态的简化接口
  *     parameters:
  *       - in: path
  *         name: id
@@ -124,6 +160,7 @@ router.delete('/:id', taskController.deleteTask);
  *               status:
  *                 type: string
  *                 enum: [pending, in_progress, completed]
+ *                 description: 新的任务状态
  */
 router.patch('/:id/status', taskController.updateTaskStatus);
 

@@ -11,7 +11,7 @@ const taskController = {
      */
     async createTask(req, res) {
         try {
-            const { title, description, priority, due_date } = req.body;
+            const { title, description, content, priority, due_date } = req.body;
 
             // 验证必填字段
             if (!title) {
@@ -24,6 +24,7 @@ const taskController = {
             const task = await Task.create({
                 title,
                 description,
+                content,    // 添加 content 字段
                 priority,
                 due_date
             });
